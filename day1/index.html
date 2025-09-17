@@ -8,8 +8,21 @@
 <body>
     <h1>0917수업</h1>
 
+    <input id="input-name" />
+    <button id="btn-test"> 테스트버튼 </button>
+
     <script>
         console.log("hello")
+        console.log("202258011")
+        console.log("진병훈")
+
+        var btnTest = document.getElementById("btn-test")
+        var inputName = document.getElementById("input-name")
+
+        btnTest.addEventListener('click',()=> {
+
+            console.log("안녕하세요" + inputName.value + "님")
+        })
 
     </script>
 
