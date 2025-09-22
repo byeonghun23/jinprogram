@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 id = "counter-output">counter : 0</h1>
+    <button id="btn-Inc"> Inc </button>
+    <button id="btn-Dec"> Dec </button>
+
+    <script>
+        var counteroutput = document.getElementById("counter-output")
+        var btnInc = document.getElementById("btn-Inc");
+        var btnDec = document.getElementById("btn-Dec");
+        var counter = 0
+
+        btnInc.addEventListener('click',()=> {
+            console.log("Click " + counter);
+            counter = counter + 1
+            counteroutput.innerText = "counter : " + counter
+            })
+        
+        btnDec.addEventListener('click',()=> {
+            console.log("Click " + counter);
+            counter = counter - 1
+            counteroutput.innerText = "counter : " + counter
+            })
+    </script>
+    
+</body>
+</html>
