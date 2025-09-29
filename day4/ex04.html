@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>radio button Sample</title>
+</head>
+<body>
+    
+    <h1>Radio Button Sample</h1>
+    <div>
+        <input type="radio" name="fruite" value="사과"/>사과
+    </div>
+    <div>
+        <input type="radio" name="fruite" value="바나나"/>바나나
+    </div>
+    <div>
+        <input type="radio" name="fruite" value="포도"/>포도
+    </div>
+
+    <button id="btn-select"> 확인 </button>
+    <p>
+        결과 : <span id="output-result"></span>
+    </p>
+
+    <div>
+        <input type="radio" name="girlgruop" value="에스파" />에스파
+    </div>
+    <div>
+        <input type="radio" name="girlgruop" value="아일릿" />아일릿
+    </div>
+    <div>
+        <input type="radio" name="girlgruop" value="뉴진스" />뉴진스
+    </div>
+    <div>
+        <input type="radio" name="girlgruop" value="아이브" />아이브
+    </div>
+
+    <button id="btn-select2"> 확인 </button>
+    <p>
+        결과 : <span id="output-result2"></span>
+    </p>
+
+    <script>
+        var btnselect = document.getElementById("btn-select")
+        var outputresult = document.getElementById("output-result")
+
+        btnselect.addEventListener('click',()=> {
+        var selectItem = document.querySelector("input[name=fruite]:checked")
+        outputresult.innerText = selectItem.value
+        })
+
+        var btnselect2 = document.getElementById("btn-select2")
+        var outputresult2 = document.getElementById("output-result2")
+
+        btnselect2.addEventListener('click',()=> {
+        var selectItem2 = document.querySelector("input[name=girlgruop]:checked")
+        outputresult2.innerText = selectItem2.value
+        })
+    </script>
+
+
+</body>
+</html>
