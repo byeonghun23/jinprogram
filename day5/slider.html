@@ -3,9 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>slider example</title>
 </head>
 <body>
+    <h1>
+        볼륨을 높여요
+    </h1>
+
+    <div>
+        <input type="range" min="0" max="100" value="50" id="range-vol">
+        : <span id="current-vol">50</span>
+    </div>
+
+    <button id="btn-submit">제출</button>
+    <p id="txt-result"></p>
     
+
+    <script>
+        var rangevol = document.getElementById("range-vol")
+        var btnsubmit = document.getElementById("btn-submit")
+        var txtresult = document.getElementById("txt-result")
+        var currentvol = document.getElementById("current-vol")
+
+        btnsubmit.addEventListener('click',()=> {
+            txtresult.innerText = "volume : " + rangevol.value
+        })
+        rangevol.addEventListener('change',()=> {
+            currentvol.innerText = rangevol.value
+        })
+        rangevol.addEventListener('input',()=> {
+            currentvol.innerText = rangevol.value
+        })
+    </script>
+
 </body>
 </html>
