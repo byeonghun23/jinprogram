@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>202258011 진병훈</h1>
+    <h1 id = "counteroutput">counter : 0</h1>
+    <button id = "btninc">inc</button>
+    <button id = "btndec">dec</button>
+    <button id = "btnres">reset</button>
+
+    <script>
+        var counteroutput = document.getElementById("counteroutput")
+        var btninc = document.getElementById("btninc")
+        var btndec = document.getElementById("btndec")
+        var btnres = document.getElementById("btnres")
+        var counter = 0
+
+        btninc.addEventListener('click', () => {
+            console.log('click' + counter)
+            counter = counter + 1
+            counteroutput.innerText = 'counter : ' + counter
+        })
+
+        btndec.addEventListener('click', () => {
+            console.log('click' + counter)
+            counter = counter - 1
+            counteroutput.innerText = 'counter : ' + counter
+        })
+
+        btnres.addEventListener('click', () => {
+            console.log('click' + 0)
+            counter = 0
+            counteroutput.innerText = 'counter : ' + counter
+        })
+    </script>
+</body>
+</html>
