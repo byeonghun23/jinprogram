@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            margin: 0px;
+            padding: 0px;
+        }
+        .box {
+            width: 128px;
+            height: 128px;
+            background-color: blue;
+            color: white;
+            border: 1px solid black;
+             }
+
+        .hor-left {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .hor-center {
+            display: flex;
+            justify-content: center; 
+            align-content: center; 
+        }
+        
+        .hor-right {
+            display: flex;
+            justify-content: flex-end;
+            align-content: center;
+        }
+
+        .vert-top {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .vert-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .vert-bottom {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="box">
+        박스
+    </div>
+
+    <div class="box hor-left">
+        박스
+    </div>
+    <div class="box hor-center">
+        박스
+    </div>
+    <div class="box hor-right">
+        박스
+    </div>
+
+    <div class="box vert-top">
+        박스
+    </div>
+    <div class="box vert-center">
+        박스
+    </div>
+    <div class="box vert-bottom">
+        박스
+    </div>
+</body>
+</html>
