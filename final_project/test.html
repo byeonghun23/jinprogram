@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>OTT 플랫폼 소개</title>
+
+  <!-- 폰트 (원하면 바꿔도 됩니다) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #0f1724;
+      --card: #0b1220;
+      --muted: #94a3b8;
+      --accent: #6ee7b7; /* 강조색 (초록) */
+      --glass: rgba(255,255,255,0.03);
+      --radius: 12px;
+      --max-width: 1100px;
+      --gap: 18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: "Inter", system-ui, -apple-system, "Apple SD Gothic Neo", "Nanum Gothic", "Noto Sans KR", sans-serif;
+      background: linear-gradient(180deg, var(--bg) 0%, #071028 100%);
+      color: #e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:40px 18px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      gap:32px;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:var(--max-width);
+    }
+
+    /* 헤더/히어로 */
+    .hero{
+      display:flex;
+      gap:var(--gap);
+      align-items:center;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:var(--radius);
+      padding:28px;
+      margin-bottom:22px;
+      box-shadow: 0 6px 20px rgba(2,6,23,0.6);
+      backdrop-filter: blur(6px);
+    }
+
+    .hero-left{
+      flex:1 1 420px;
+      min-width:200px;
+    }
+
+    .kicker{
+      display:inline-block;
+      background:linear-gradient(90deg, rgba(110,231,183,0.14), rgba(110,231,183,0.06));
+      color:var(--accent);
+      padding:6px 10px;
+      border-radius:999px;
+      font-weight:600;
+      font-size:13px;
+      letter-spacing:0.2px;
+      margin-bottom:12px;
+    }
+
+    h1{
+      margin:0 0 12px 0;
+      font-size: clamp(20px, 3.4vw, 32px);
+      line-height:1.05;
+      letter-spacing:-0.3px;
+    }
+
+    p.lead{
+      margin:0 0 18px 0;
+      color:var(--muted);
+      font-size:15px;
+    }
+
+    .cta{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:10px;
+      border: none;
+      cursor:pointer;
+      font-weight:600;
+      font-size:14px;
+      background:var(--accent);
+      color:#07221b;
+      box-shadow: 0 6px 18px rgba(110,231,183,0.12);
+      text-decoration:none;
+    }
+    .btn.ghost{
+      background:transparent;
+      border:1px solid rgba(255,255,255,0.06);
+      color:var(--muted);
+      font-weight:500;
+      box-shadow:none;
+    }
+
+    /* 히어로 오른쪽: 플레이 이미지 카드 */
+    .hero-right{
+      width:360px;
+      max-width:40%;
+      min-width:180px;
+      position:relative;
+    }
+    .poster{
+      border-radius:14px;
+      overflow:hidden;
+      background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.12));
+      box-shadow: 0 12px 40px rgba(2,6,23,0.6);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+    .poster img{
+      display:block;
+      width:100%;
+      height:220px;
+      object-fit:cover;
+    }
+    .poster .meta{
+      padding:12px 14px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .poster .meta .title{ font-weight:700; font-size:15px; }
+    .poster .meta .rating{ color:var(--muted); font-size:13px; }
+
+    .play-btn{
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:-18px;
+      background:linear-gradient(180deg, var(--accent), #2bd99e);
+      border-radius:999px;
+      border: none;
+      padding:12px 18px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 18px 36px rgba(19,40,38,0.28);
+      color:#05221a;
+    }
+
+    /* 플랫폼 카드 그리드 */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap:var(--gap);
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;
+      padding:14px;
+      border:1px solid rgba(255,255,255,0.03);
+      transition: transform .22s ease, box-shadow .22s ease;
+      box-shadow: 0 6px 18px rgba(2,6,23,0.5);
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .card:hover{
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(2,6,23,0.6);
+    }
+    .card .logo{
+      min-width:72px;
+      height:72px;
+      border-radius:10px;
+      overflow:hidden;
+      background:var(--glass);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      font-size:20px;
+      color:var(--accent);
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .card .info{
+      flex:1;
+      min-width:0;
+    }
+    .card .info h3{
+      margin:0 0 6px 0;
+      font-size:16px;
+      font-weight:700;
+    }
+    .card .info p{
+      margin:0;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.3;
+    }
+    .tag{
+      display:inline-block;
+      margin-top:10px;
+      padding:6px 8px;
+      font-size:12px;
+      border-radius:8px;
+      background: rgba(110,231,183,0.08);
+      color:var(--accent);
+      font-weight:600;
+    }
+
+    /* 반응형: 모바일에서 히어로 세로 정렬 */
+    @media (max-width:860px){
+      .hero{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .hero-right{
+        width:100%;
+        max-width:100%;
+      }
+      .play-btn{ left:18px; transform:none; bottom:-18px;}
+      body{ padding:20px; }
+    }
+
+    /* 접근성 대비: 줄간격/포커스 */
+    a:focus, button:focus{ outline:3px solid rgba(110,231,183,0.12); outline-offset:3px; border-radius:8px; }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-left">
+        <div class="kicker">추천 플랫폼</div>
+        <h1 id="hero-title">모두가 즐기는 OTT — 새로운 콘텐츠 경험</h1>
+        <p class="lead">최신 영화·드라마·애니메이션을 한 곳에서. 개인별 추천, 오프라인 다운로드, 가족 프로필까지 — 당신의 취향에 맞춘 큐레이션을 제공합니다.</p>
+
+        <div class="cta">
+          <a href="#" class="btn">지금 체험하기</a>
+          <a href="#" class="btn ghost">요금제 보기</a>
+        </div>
+      </div>
+
+      <div class="hero-right" aria-hidden="false">
+        <div class="poster" role="img" aria-label="추천 콘텐츠 포스터">
+          <img src="https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="추천 콘텐츠 이미지">
+          <div class="meta">
+            <div>
+              <div class="title">오늘의 추천: 바다를 건너</div>
+              <div class="rating">드라마 · 16부작 · 평점 9.1</div>
+            </div>
+            <div class="tag">신작</div>
+          </div>
+        </div>
+
+        <button class="play-btn" aria-label="플레이 트레일러">▶ 재생</button>
+      </div>
+    </section>
+
+    <section aria-label="플랫폼 리스트">
+      <div class="grid">
+        <!-- 카드 반복 예시 -->
+        <article class="card">
+          <div class="logo" aria-hidden="true">NP</div>
+          <div class="info">
+            <h3>넷플렉스 스타일</h3>
+            <p>오리지널 시리즈와 전 세계 콘텐츠를 제공하는 대표 OTT. 맞춤 추천과 고화질 스트리밍 지원.</p>
+            <div class="tag">추천컬렉션</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="logo" aria-hidden="true">ST</div>
+          <div class="info">
+            <h3>스튜디오플러스</h3>
+            <p>국내 드라마·예능에 강점—지역 콘텐츠와 독점 스트리밍을 제공합니다.</p>
+            <div class="tag">한글자막</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="logo" aria-hidden="true">ANI</div>
+          <div class="info">
+            <h3>애니월드</h3>
+            <p>애니메이션 전문 플랫폼 — 최신 방영작과 클래식 작품을 폭넓게 보유.</p>
+            <div class="tag">어린이모드</div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="logo" aria-hidden="true">DOC</div>
+          <div class="info">
+            <h3>다큐라이브</h3>
+            <p>심도 있는 다큐멘터리 및 교양 콘텐츠를 제공 — 지적 호기심을 채워주는 플랫폼.</p>
+            <div class="tag">학습형</div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
