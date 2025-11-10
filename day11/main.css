@@ -1,0 +1,44 @@
+body {
+    display: flex;
+    background-color: rgb(19, 19, 126);
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    font-family: 'DosStory';
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: center;
+    position: relative;
+}
+
+
+@font-face {
+    font-family: 'DosStory';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-2@1.0/DOSIyagiMedium.woff2') format('woff2');
+    font-weight: normal;
+    font-display: swap;
+}
+
+.big-text {
+    font-size : 64px;
+}
+
+.mid-text {
+    font-size : 32px;
+}
+
+.small-text {
+    position: absolute;
+    font-size : 18px;
+}
+
+.top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.bottom-left {
+    bottom: 20px;
+    left: 20px;
+}
