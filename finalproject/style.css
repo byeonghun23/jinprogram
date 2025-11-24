@@ -1,0 +1,337 @@
+/* 기본 세팅 */
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: black;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  font-family: 'NexonMaplestory';
+}
+header {
+  text-align: center;
+  background: black;
+  color: #E50914;
+  padding: 2rem 1rem;
+  font-family: 'JoseonPalace';
+  
+}
+header h1 {
+  margin: 0;
+  font-size: 2.4rem;
+  
+}
+header p {
+  margin-top: 0.5rem;
+  font-size: 1.1rem;
+  opacity: 0.85;
+  
+}
+.menu {
+  background: black;
+  
+}
+.menu ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 0;
+  
+}
+.menu ul li {
+  margin: 0 15px;
+  
+}
+.menu ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1rem;
+  
+}
+.section {
+  padding: 2rem 1rem;
+  
+}
+.section h2 {
+  font-size: 1.8rem;
+  color: white;
+  border-left: 5px solid black;
+  padding-left: 10px;
+  margin-bottom: 1rem;
+}
+.anime-list {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 10px;
+  scroll-behavior: smooth;
+  scrollbar-width: none; 
+  cursor: grab;
+  user-select: none;
+}
+
+.anime-list::-webkit-scrollbar {
+  display: none;
+}
+
+.anime-list.active {
+  cursor: grabbing;
+}
+
+
+.anime-card {
+  flex: 0 0 auto; /* 스크롤 시 옆으로 배치 */
+  width: 220px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.anime-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+.anime-card img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  display: block;
+}
+.anime-card h3 {
+  margin: 0.8rem;
+  font-size: 1.1rem;
+  color: #333;
+  text-align: center;
+}
+/* 모달 스타일 */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+  padding-top: 80px;
+}
+.modal-img {
+  width: 100%;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.modal-content {
+  background-color: rgb(24, 23, 23);
+  margin: auto;
+  padding: 20px;
+  padding-bottom: 40px;    /* ★ 등장인물 영역까지 스크롤 가능해지는 핵심 줄 */
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;        /* 세로 스크롤 */
+  overflow-x: hidden;
+}
+.modal-content h2 {
+  margin-top: 0;
+  font-size: 1.6rem;
+  color: white;
+}
+.modal-content p {
+  font-size: 1rem;
+  color: white;
+  margin: 10px 0;
+}
+/* 등장인물 전체 컨테이너 */
+.character-section {
+  margin-top: 20px;
+  padding: 10px 0;
+  
+}
+
+
+/* 등장인물 제목 */
+.character-section h3 {
+  margin-bottom: 10px;
+  text-align: left;
+  font-size: 1.2rem;
+  color: white;
+}
+
+/* 등장인물 리스트(가로 스크롤) */
+.character-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-bottom: 10px;
+  max-width: 100%;
+  height: 180px;
+  box-sizing: border-box;
+  cursor: grab;      /* 드래그 느낌 표시 */
+  user-select: none;
+}
+
+.character-list::-webkit-scrollbar {
+  display: none;     /* 스크롤바 완전 숨김 */
+}
+
+.character-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+.character-list::-webkit-scrollbar-track {
+  background: #333;
+}
+
+.character-list.active {
+  cursor: grabbing;
+}
+
+
+/* 등장인물 카드 */
+.character-card {
+  flex: 0 0 auto;
+  width: 120px;
+  background: #111;
+  border-radius: 10px;
+  text-align: center;
+  padding-bottom: 10px;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+/* 등장인물 이미지 */
+.character-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;     /* ★ contain → cover 로 변경 */
+  background: black;
+  display: block;
+  pointer-events: none;
+}
+
+/* 이름 */
+.character-name {
+  color: white;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+
+
+.close {
+  color: #aaa;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.close:hover {
+  color: #000;
+}
+footer {
+  text-align: center;
+  padding: 1.5rem 0;
+  background: #283e78;
+  color: white;
+  font-size: 0.9rem;
+  margin-top: 2rem;
+}
+@media (max-width: 600px) {
+  header h1 {
+    font-size: 1.8rem;
+  }
+  .anime-card img {
+    height: 200px;
+  }
+}
+
+
+
+
+@font-face {
+    font-family: 'NexonMaplestory';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/MaplestoryOTFLight.woff') format('woff');
+    font-weight: 300;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'JoseonPalace';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunGs.woff') format('woff');
+    font-weight: normal;
+    font-display: swap;
+}
+
+/* 오른쪽 상단 메뉴 전체 컨테이너 */
+.top-menu {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+/* 메뉴 버튼 스타일 */
+.menu-btn {
+  position: fixed;
+  right: 20px;
+  top: 20px;
+  background: #E50914;
+  color: white;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 200;
+}
+
+.dropdown {
+  display: none;
+  position: fixed;
+  right: 20px;
+  top: 70px;
+  background: #222;
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 200;
+}
+
+.dropdown button {
+  width: 100%;
+  background: #333;
+  color: white;
+  padding: 10px;
+  border: none;
+  margin-bottom: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.reroll-btn {
+  display: none;
+  width: 100%;
+  padding: 10px;
+  background: #E50914;
+  color: white;
+  border-radius: 6px;
+  border: none;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+
+.anime-list.dragging {
+  cursor: grabbing;
+  user-select: none;
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>AniLover Start</title>
+<style>
+  body {
+    margin: 0;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: white;
+    font-family: 'NexonMaplestory';
+  }
+
+  #start-btn {
+    padding: 20px 50px;
+    font-size: 2rem;
+    background: #E50914;
+    color: white;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+  }
+
+  #start-btn:hover {
+    transform: scale(1.05);
+  }
+</style>
+</head>
+<body>
+
+<button id="start-btn">시작하기</button>
+
+<script>
+document.getElementById("start-btn").addEventListener("click", () => {
+  location.href = "intro.html";   // 영상 페이지로 이동
+});
+</script>
+
+</body>
+</html>

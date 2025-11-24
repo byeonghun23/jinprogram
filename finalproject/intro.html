@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Intro</title>
+<style>
+  body {
+    margin: 0;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  video {
+    width: 80%;       /* 적당한 크기 */
+    max-width: 900px; /* 너무 큰 화면 방지 */
+    border-radius: 12px;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- 영상 파일 -->
+<video id="opening-video">
+  <source src="inee.mp4" type="video/mp4">
+</video>
+
+<script>
+  const video = document.getElementById("opening-video");
+
+  // 자동 재생
+  video.play().catch(() => {
+    // 만약 브라우저가 자동재생 막으면 클릭 요청 메시지 띄운 다음 재생 가능
+    alert("영상 자동재생이 차단되어 클릭 후 재생됩니다.");
+  });
+
+  // 영상 종료 후 메인 페이지 index.html로 이동
+  video.addEventListener("ended", () => {
+    location.href = "index.html";
+  });
+</script>
+
+</body>
+</html>
