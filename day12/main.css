@@ -44,3 +44,12 @@ main {
     justify-content: center;
     align-items: center;
 }
+
+.select {
+    background-color: Black;
+    color: white;
+}
+
+.hide{
+    display: none;
+}
