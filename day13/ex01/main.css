@@ -56,3 +56,11 @@ main {
 .hide {
     display: none;
 }
+
+.option-title {
+    font-size: 50px;
+}
+
+.back-button {
+    font-size: 40px;
+}
