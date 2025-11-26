@@ -20,16 +20,12 @@ body {
 header {
     display: flex;
     padding: 16px;
-    /* background-color: yellow; */
-    /* color: black; */
     justify-content: flex-end;
 }
 
 footer {
     display: flex;
     padding: 16px;
-    /* background-color: black; */
-    /* color: white; */
 }
 
 main {
@@ -61,6 +57,6 @@ main {
     font-size: 50px;
 }
 
-.back-button {
+.back-button2 {
     font-size: 40px;
 }

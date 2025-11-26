@@ -3,7 +3,6 @@ export default async function main() {
 
 
     const mainMenu = document.querySelector('#main-menu')
-    // const newGame = document.querySelector('')
     const creditScreen = document.querySelector('#credit-screen')
     const optionScreen = document.querySelector('#option-screen')
     let currentScreen = "mainMenu"
