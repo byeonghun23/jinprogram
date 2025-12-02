@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>애니 명장면 모음</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+  body {
+    background: black;
+    color: white;
+    margin: 0;
+    padding: 20px;
+    font-family: 'NexonMaplestory';
+  }
+
+  h1 {
+    text-align: center;
+    color: #E50914;
+    margin-bottom: 30px;
+    font-size: 2rem;
+  }
+
+  /* 전체 그리드 */
+  .scene-grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    padding-bottom: 50px;
+  }
+
+  /* 각 이미지 카드 */
+  .scene-card {
+    border-radius: 12px;
+    overflow: hidden;
+    background: #111;
+    border: 1px solid #333;
+    transition: transform 0.2s;
+    cursor: pointer;
+  }
+
+  .scene-card:hover {
+    transform: scale(1.03);
+  }
+
+  .scene-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .scene-title {
+    padding: 10px;
+    font-size: 0.95rem;
+    color: #ddd;
+    text-align: center;
+  }
+
+  /* 뒤로가기 버튼 */
+  .back-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    padding: 10px 14px;
+    background: #E50914;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+  }
+
+  /* 이미지 클릭 시 확대 모달 */
+  .img-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  .img-modal-content {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+
+  .img-close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 45px;
+    color: white;
+    cursor: pointer;
+  }
+</style>
+</head>
+
+<body>
+
+<a href="index.html" class="back-btn">← 메인으로 </a>
+<h1>미리보기</h1>
+
+<div class="scene-grid" id="scene-container">
+  <!-- 여기에 이미지 자동 삽입됨 -->
+</div>
+
+<!-- 클릭 확대 모달 -->
+<div id="img-modal" class="img-modal">
+  <span class="img-close" id="close-modal">&times;</span>
+  <img id="img-modal-content" class="img-modal-content">
+</div>
+
+<script>
+/* 명장면 이미지 목록 (원하면 여기 계속 추가 가능) */
+const sceneImages = [
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTEwMDRfNjcg%2FMDAxNzU5NTg4NDE4NjA0.EOY8wHYLWCWLCqXLNfLTmxkCaIA9xLW-hNe6N18ZHj0g.jsDKWZ3TLvM-5s6_D7SJ5DXFvPCYr9zByB0ZOysPm8wg.GIF%2F2025-10-04232213-ezgif.com-video-to-gif-converter.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2F20160125_103%2Fkja050102_1453697385608F8b2M_GIF%2F20160125134119.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi3.ruliweb.com%2Fori%2F23%2F02%2F05%2F18620598d6f525908.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAxMjBfMjIx%2FMDAxNzM3MzYyMzU0NTg2.FDrd8p8XoYLtrOzlP211M7ZRoouAs2UrQ76G7UR3Idwg.6kHSsLOz78xzXo2R6rvNHZ3XShUyjDZqejjrNo82TSgg.GIF%2F147560.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA3MDRfMTgx%2FMDAxNzUxNTk1NjI0Mzc1.6fMXxpC0BRg2hM4zdvSa9o8XtxhY4m8CohDlRfRwRYkg.sSexd3U3_fpt-I00BaDIcZaqg_rUyXRcdcvu7uiw3M0g.GIF%2FGIF_2025-07-04_%25BF%25C0%25C0%25FC_10-44-12.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA3MDNfNjEg%2FMDAxNzIwMDE3ODU4NTQ2.H9ZFJmQI4DKGXfgDT-cCno3dhpYd5a6g4rbWe9n4WVcg.ZEjbHbMuHxEaLyfK5FTYuW-1Bn7B7ajwKrRvdGAnW6wg.GIF%2F15.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20150130_63%2Fimmafangirl_1422621932444JKxk8_GIF%2Ftumblr_lzewlrV4KW1qk51gpo1_500.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDEwMjZfMjA5%2FMDAxNjAzNzEyMzAxMTM4.R_K2FUH-Tr_pqiHPrc-pbB_1_X_kKFA9V3o9b3eQrIgg.FyW5jaNshwh0QqH2US_AwTPUwBck9zpWavQsO8Edjn4g.GIF.awakedear%2F%25C0%25CC%25B4%25A9%25BE%25DF%25BB%25FE20.gif&type=sc960_832_gif"},
+  { src: "https://i.ytimg.com/vi/tFdY41WSveE/maxresdefault.jpg"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTEwMDFfMTMz%2FMDAxNzU5Mjg4ODIxODky.H7t0pqb1SG7kD6FPL8n7JxORuST611zpRXxTo0RxQZsg.vYHuqlJu_6p-eGydg889HgslXt54qjwjx3h1KFZLRvUg.GIF%2Freze-csm.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTEwMzFfMjA1%2FMDAxNzYxODgyNjI0MjM5.-sLHZjWjlSHRTeCqgZ60XeRLtjQKCOoHlSzvxXH4vGIg.S57rLZ36vBJMzWsjlBfaIjhbzBZoWGL4t8RWQwSYsKcg.GIF%2F870E9602%25A3%25AD94A7%25A3%25AD47EB%25A3%25ADA0D6%25A3%25ADFBE5CA61A401.gif&type=sc960_832_gif"},
+  { src: "https://dcimg4.dcinside.co.kr/viewimage.php?id=28b9d723f7c736a86badc5e7468673&no=24b0d769e1d32ca73fea82fa11d0283100024f51dc9ac1e2672250b3d875d8f16c26e8600cf64c9b28f448f1525d28677bcb2bf9005792e5217835fc48a40f854c109d149503c2937af112f0dc4c42231c9c237563c6b13dc58d54293ebe39f818d4e653ea811f08130d"},
+  { src: "https://search.pstatic.net/sunny/?src=http%3A%2F%2F24.media.tumblr.com%2Fc6474f53072db730c39f469f9621ac2e%2Ftumblr_mik4ws4LnK1qhdqq4o1_500.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA1MzBfMTY0%2FMDAxNzE3MDUxMjA2OTM2.j1bIwtYL4UtyIcqNHO_GyttzJE4dr3YN0yjao61l3rEg.gG93WFcGXRrCopcm-FswhuI1ZmqSb6zougbK50QpBr8g.GIF%2F%25B9%25AB%25B7%25AE%25B0%25F8%25C3%25B3_2.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzEwMTNfMTE1%2FMDAxNjk3MTY4MzEwNTM1.eqoXJKrkk6h89d8qv7XDp1gdt3ObLsUv9DxHW-q1U5Ag.e47WeVdQVjG-TekoIzRW5QlHvs7_3hRRqvj8wLKSk-Qg.GIF.ktf0427%2F1697125359.gif&type=sc960_832_gif"},
+  { src: "https://i3.ruliweb.com/img/5/5/2/A/552AB8504E1779000B"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA1MjhfMTAy%2FMDAxNzE2OTA3MDU4MTQz.Epzr47TIGKzoqVlTYBC1p9_-5vmHi31hN14kM4n1zEkg.EpcWVBDw-HeCrB9Q5plZG-aw24ItfD9uT0hv8pLizhMg.GIF%2F2.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2F20160128_212%2Fkja050102_14539836994893ogkp_GIF%2F20160128211443.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA3MzBfNyAg%2FMDAxNjkwNjgxMTM3MDU2.UytqtzgUSoDv1bydOx_5TM3z_Y5PgmbjxKNk-8WOQPog.TskMBNryMi5zNTK0sn9r1SMl-IvZTjGJX26CJ_Y9Ussg.GIF.wldn528401%2FKakaoTalk_20230730_101544663_10.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxOTA0MTlfMjM3%2FMDAxNTU1NjYzNjExNDk3.dYkFpVt5ZOC7EFXXhfV-ovyOA7lMBj4reWEDkAoY2Vgg.r4azbIpeIsWMdHXY-r1qGwzgspqsCcdUf0ejmIpOYWQg.PNG.5uj1128%2F%25BD%25BA%25C5%25A9%25B8%25B0%25BC%25A6_2019-04-19_%25BF%25C0%25C8%25C4_4.49.21.png&type=sc960_832"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi1.ruliweb.com%2Fori%2F22%2F12%2F20%2F1852c664621176453.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDEyMTdfNCAg%2FMDAxNzM0MzYyMjE5MDcx.LnUP_ROiGGUDDsI6kXtXP3k5A70xIFD_OfSsdcZY0n0g.dEWD-pHzJ7t17_t1a03c3qTOQRhHyXalF5GfGCgXMBAg.GIF%2F%25B3%25D7%25C1%25EE%25C4%25DA_1.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA2MThfMjEg%2FMDAxNzUwMjU2NTM3NTA1.5Ry4Kx_wkputEfB7TVzGMnmIYyz7ajEt9XE1Bb33qB4g.hLZ9hSPtBKQI-M3Mr9LVAvpKm9JPwkZYRl3U1sif4Zcg.GIF%2F%25EC%25B4%2588%25ED%2598%25B8%25EA%25B8%253F_2.gif&type=sc960_832_gifhttps://search.pstatic.net/sunny/?src=https%3A%2F%2Fi1.ruliweb.com%2Fori%2F22%2F12%2F20%2F1852c664621176453.gif&type=sc960_832_gifhttps://search.pstatic.net/sunny/?src=https%3A%2F%2Fi1.ruliweb.com%2Fori%2F22%2F12%2F20%2F1852c664621176453.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDA2MDJfMjU0%2FMDAxNTkxMDI3ODAwNjQ2.GPxwLg42c1UQIM7fT05wG7_KPcPIVJbxEW3YqftCgPUg.7RVqfu4ltCuIJrCByTTfCrk8qG3D2-8qxxT_edQYOmMg.JPEG.oyanamoo%2F20200602_010223.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20150101_97%2Fwgr1029_1420107905300Dj9zj_JPEG%2F%25C2%25AF%25B1%25B8%25B4%25C2_%25B8%25F8%25B8%25BB%25B7%25C1_%25B1%25D8%25C0%25E5%25C6%25C7_22%25B1%25E2_-_%25C1%25F8%25B0%25CB%25BD%25C2%25BA%25CE_%25BF%25AA%25BD%25C0%25C0%25C7_%25B7%25CE%25BA%25BF%25BE%25C6%25BA%25FC19-10-21.JPG&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20131103_121%2Fcatiff_1383447102182pAUrS_GIF%2Ftumblr_mc411xNgWz1rbpba6o1_500.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDA2MDdfMTA5%2FMDAxNTkxNTEwNTY2NTAx.bmqsNTqualCZDLqUsEtLxYATjzU1t2JTBpOOp-wWZEsg.laqvpzG9UkFGmLZRVz_jSC1RiUWgKZzFlwUx7rBhCRgg.GIF.hhr6832%2F1591510564460.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDAzMzFfOTkg%2FMDAxNTg1NjYyMTI2NjQx.LAJLmjdwfU6GeSPgadbQuN5d1jO8rXQD0PRQEa0T_1Ig.oEPYywrM7wd8yapDK6NoT5KR1-ucBHOmnRb5Z5eGs5Ig.GIF.baekhun0330%2F%25BF%25A1%25B7%25BB_%25C1%25C2%25C7%25A5_gif_2_3.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi3.ruliweb.com%2Fori%2F21%2F03%2F23%2F1785b3432a513e04c.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA3MTJfMTY2%2FMDAxNzUyMzI1NDQ5MjQ5.ffJJ7NM3BC-puwuLAgA6CCgZng0zpCXJzn-41bv8ERIg.e22Kh-LXjQrRGheSvtfhLBhkNX5mZ3BKNSswOq5C0IMg.GIF%2F502577C6%25A3%25AD6942%25A3%25AD4BDD%25A3%25ADB128%25A3%25ADF619858E2129.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=http%3A%2F%2Ffile2.instiz.net%2Fdata%2Ffile2%2F2016%2F10%2F25%2F7%2F8%2F6%2F7865833e0ab18086b255458d28fb8f0a.gif&type=sc960_832_gif"},
+  { src: "https://i2.ruliweb.com/ori/20/07/17/1735aea3f1843aeda.gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi.namu.wiki%2Fi%2FfbfTkiNCPuCVJgpdWQ2Vb4ePhVM9V-fDFpGUdg0V32BnCiEaZG-X--Ogs6y-EL_cqVigs-zg6XxsSle-IL-iaQ.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA1MTBfMjE5%2FMDAxNzE1MzMwMDI0NTcz.HYimiIC06POfWmOfMBFdf6X3msAIC3nTdKriFlJUXBsg.jewt4EXfNqynSyef_BlktClzezJwFmlxa7wgCSbkMx8g.GIF%2FSmartSelect%25A3%25DF20230313%25A3%25DF171945.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MThfMTUg%2FMDAxNzIzOTUyNjYwNjM4.w32NmRooWvRfxESaJkYx7YAYNfQO2FCWUC4p9E0mV9sg.x_8vv6Hg3IAz0gqXddzAmDbUBYUZxiqelCj2Ds3RO-Eg.GIF%2Fshot_02.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTAyMDFfMTEy%2FMDAxNjEyMTA2MDM4NTEy._sQ44mtR7fPYd2WyJShFHXZXjZmu3vrwu-wo8hcHQi4g.osf1IhcCu1EEJTYY0I2472BUtuqzCQCuwiMaQzWL0IMg.GIF.lara46%2Ftumblr_ff0c04e24b41537197942f1c7c286240_d61138b0_540.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi1.ruliweb.com%2Fori%2F22%2F12%2F20%2F1852c6645f9176453.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzEyMDdfNDMg%2FMDAxNzAxOTYwMjE3NDM5.HS99q8zL5fvAG9ScEs5X6c21aUYTi_Or0psU-vy5OoMg.YPv5UbXPfDR8vj6eQAYEhrvqmO9HG1-0mgsLzGEncPAg.GIF.nammmh_97%2F%25B4%25D9%25BF%25EE%25B7%25CE%25B5%25E5.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxODEwMjRfMTA4%2FMDAxNTQwMzYzMDA1Mjcx.EaCbiDxlTuSY_QWqYfZp7LnqAIVbuhZWmG2rNq4Lxesg.7UmJ4yPHhZWUniDy9-cHQJEitWk4SKNLdWO-Xi7zjbQg.PNG.ladybug0816%2F%25B4%25EB%25C1%25F6_5.png&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTA5MTBfMTk5%2FMDAxNjMxMjc1NjQzNDQ5.FsckkceggIahIOXEEyN-g8ocbQUobq_GNSgKWI9yJYAg.udJiY3-XmbvUIVXr3lH_4dYFBLhMt8IZ6qVsQGZ6-uUg.JPEG.lsy950419%2FKakaoTalk_20210910_195933961_12.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDAyMjRfMTYw%2FMDAxNTgyNTQ5NzY5MjAy.ot5rLFbA6XG5qZR0RSeFJgyl5Tpwn-s83anHWILEbC0g.vRYVmNeIvLrj0g4njKCzkMjlgnOIvztX_5rQBK6tVmMg.JPEG.smartjy67%2Fdog-1.jpg&type=sc960_832 "},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fimage.nmv.naver.net%2Fblogucc28%2F2018%2F06%2F11%2F1740%2F624fa89a061a8c13b1d20ffd6a19bd595431_ugcvideo_270P_01_16x9_logo.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2Fdata36%2F2009%2F2%2F10%2F247%2F%25C0%25BA%25C7%25CF%25C3%25B6%25B5%25B5_999_113%2528fin%2529.avi_001120120_roupto.jpg&type=sc960_832 "},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDAzMjVfMTU5%2FMDAxNzExMzEwNDE4NDU2.ef6Tq5SnHQfFUTYuhPUGTryPY4jcIOzkNWilzaXFR3wg.UWFGDwhi33KoYTfdWjNw5vBzBjRxftVruOlS94sw9pAg.PNG%2F%25BD%25BA%25C5%25A9%25B8%25B0%25BC%25A6_2024-03-25_%25BF%25C0%25C0%25FC_4.46.50.png&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxOTA0MTVfMjYz%2FMDAxNTU1MzM5NDc0MDIz.bcc3utljavlPxnlOpnw3W7B8NcqatbE5HjGzk2zJ0pcg.Y67n8s1BNoiPNvG9OeuR2l98MMFT7JRiVXhUKdN3wzsg.JPEG.maria_s2%2F%25B5%25B5%25B6%25F3%25BF%25A1%25B8%25F9_%25B8%25ED%25B4%25EB%25BB%25E7_%25B8%25ED%25BE%25F0_%25C1%25C1%25C0%25BA%25B1%25DB_%25C2%25AA%25C0%25BA%25B1%25DB_04.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA0MjRfMTc5%2FMDAxNzQ1NDIzMDcxOTYz.K6CQq3K7d6WJfHPZ7bYrDpt33FNipuYwl0_c7n9kCp0g.9PcFOVTfGCx50cmnsgT2zs8o55m7kdXTbv4Tt_SIAwcg.JPEG%2F650%25A3%25DFFB%25A3%25DFIMG%25A3%25DF1741676030056.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2Fdata31%2F2008%2F9%2F4%2F149%2Fdoraemon.nobita.no.shin.makai.daibouken.dvdrip.xvid.ac3.cd2-.avi_002420003_tij04121.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAyMTJfMjcx%2FMDAxNzM5MzY2NTUxNTEx.elCgOw2u0PLYmAhblFT-iCK8QGWqRYvLrhCH89abBvIg.eSLdUX7aOCp7R-98KkMKmUO6Fahv3Z7iATMUy6JAwlwg.JPEG%2F%25B4%25F5%25BA%25ED%25BF%25C0_7.jpeg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20131231_232%2Fstoner323_13884954929101AVqJ_JPEG%2F0079_%25B1%25E2%25B5%25BF%25C0%25FC%25BB%25E7_%25B0%25C7%25B4%25E3_02_-_%25B0%25C7%25B4%25E3_%25C6%25C4%25B1%25AB%25B8%25ED%25B7%25C9.avi_20131231_220412.406.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20140329_253%2Fstoner323_1396098167465f8gl0_JPEG%2F0079_%25B1%25E2%25B5%25BF%25C0%25FC%25BB%25E7_%25B0%25C7%25B4%25E3_34_-_%25BC%25F7%25B8%25ED%25C0%25C7_%25B8%25B8%25B3%25B2.avi_20140329_215333.031.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fwww.dogdrip.net%2Fdvs%2Fd%2F24%2F10%2F08%2Fecb335ed1c4a2761177f5f4fe6357a45.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi3.ruliweb.com%2Fori%2F23%2F03%2F25%2F187174284c04f8bd6.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA0MDJfNDYg%2FMDAxNjgwNDMzMjc1MzAw.s8JuK2wCgAjwMGunrpVNubQBohs7wdLoSirfbYdNRWcg.vDC_Dp3DKMRO_NZao7BOpngyWeR7xjEKNB9Vg06Uk4wg.GIF.tngo1007%2F%25EA%25B2%253F%253F%2584%25B1_%25EA%25B3%25A0%25EA%25B8%25B8%253F%258F%2599_%253F%2598%2581%253F%2583%25811.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDAzMTFfMTU5%2FMDAxNzEwMTY3NjYzMDU5.pXkM1860xfl751cAKOHR6RTdRhyMTNHa5libBt7VUmYg.7PhE3UoDflwPDjlaW2f6nQOSCjAE7AEKRmhL0MwdvQ4g.PNG%2FIMG_4555.PNG&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA1MjVfMjA1%2FMDAxNjg0OTY5MTQxODA4.3P7JeCAAXyY0JJDA_ihxfB2vcQ99t890DAEnktg92EAg.ks1mORIcYg_FwjFyb7ZSctmlxDSjCmP2GwTOk0MbZVQg.JPEG.beyondbiyan%2F1684969141059.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTAyMjFfMTM0%2FMDAxNjEzODczOTIwMDAy.BUn5TXXbyPY4vV81XQ9rP1nFZlby1zySDZx6W8Jio28g.1SImEz8XKGaLSkVjGG7GmBC_kv1vgJipxXRrgbq28NQg.GIF.ksunder39%2F20210221%25A3%25DF111756.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fimage.nmv.naver.net%2Fblog_2018_12_13_2374%2F38376d5d-fe77-11e8-98d1-48df37269fd0_03.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2F20110209_19%2Fzhfldo_1297177937591iijxq_gif%2Fl_zhfldo.gif&type=a340"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxOTAzMTJfNDMg%2FMDAxNTUyMzE5MjU4ODMw.FmCsCbBqjjDw5dS4O2QLgofSXi_BV8-bxirjV1xW6Dkg.GS6-hZXBMAXDE15bo9J-0s1mog-dUNUWtlauNIGys98g.GIF.ansrudxo0001%2Fpic_file_1084461.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=http%3A%2F%2Fblogfiles.naver.net%2F20140212_202%2Ftkfka9810_1392170787649ev3nT_GIF%2F240901-detective-conan-conan-power-kick.gif.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA4MjNfOSAg%2FMDAxNjkyNzgzNTM3MzI4.-7PSFOnQZR4JWLVoLK0IKmH5hjPCuYu7QfRGSD-KERYg.phD_EnQL1ZtdqfCgiAuJPzb_MIkn1sWwRzE9A3W4zxIg.GIF.omoee112%2FIMG_5298.GIF&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2FMjAxOTAxMjBfMTQx%2FMDAxNTQ3OTk0NzIxMDEx.tMUV8jeVIWYZUpVW3Vpgq_8GZDBIuIiy0XGSm4H0Iuwg.YAn03XyVhsuN_GXsL9aopus3PiY5-_yFTcdr1sbbKHQg.PNG.modlefree%2F2E08BEF0-D370-486B-BA1F-78D39ED4F33A.png&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzExMjJfMTQ4%2FMDAxNzAwNjU1MjUyNDE4.RV55y9BYKDTCmpPCrVMtolrQCtoZkXRbAZPN8A9AMfAg.gG25NVd7iv4RPK_krNWhlz5BjDe-646bro5x8Bbl8VIg.JPEG.salt7170021%2FIMG_1468.JPG&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTAzMjdfMTgg%2FMDAxNjE2ODA1ODY4ODk1.tU9neXvdJnUDCK4kM1bGBJxjQak-RfDta1OORuiv_lEg.5ids_LIMm0V34L1ABfO93WTF8FoM5iVFjq2161ptZmUg.GIF.wr9928%2FSmartSelect_20210326-231654_Samsung_Internet.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2F20150915_242%2F929chc_1442328154161RErb6_JPEG%2F1337603239.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20160603_85%2Fkhe2069_1464897584119A37iU_GIF%2Ftumblr_o81x05YclB1rk2rdno1_500.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi1.ruliweb.net%2Fori%2F24%2F08%2F25%2F19188f6257716415f.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20100206_7%2Fyahoo3966_1265439649628uxjzc_gif%2F%25C0%25CE%25B0%25A3_%25C0%25CC%25B4%25A9%25BE%25DF%25BB%25FE_yahoo3966.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTA2MThfMTMg%2FMDAxNjI0MDEyMjE4NDY3.iYbxkicAUF6RxC4j5AVmHGQff7Rmim4vx88qjOnnrqwg.wmnX3uCFFerwHb4D138jJE1u6p_CEWguVszwig0CSqkg.GIF.yo45013%2F333646D2-2691-4873-9961-C3C2A882BFA2.gif&type=sc960_832_gif"},
+  { src: "https://w.wallhaven.cc/full/yx/wallhaven-yxmjgx.png"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi3.ruliweb.com%2Fori%2F23%2F02%2F05%2F18620598d6f525908.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=http%3A%2F%2Fdcimg2.dcinside.com%2Fviewimage.php%3Fid%3D34b7c235%26no%3D29bcc427b28177a16fb3dab004c86b6f1241ce450ebd83e290e9efb7f28f977aff554b588f2b65596741662b2696764f2653b2201479&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDExMThfMTQ0%2FMDAxNzMxOTEzMzE1NTc2.XOtiV43YHiHw_gosMrSlEaEPzJfX6mFe8d2S0zODlw4g.RDT3_Fy3-r6KxwFJOQS8agGi2w0QCwZhylLuCjrpQaEg.GIF%2FSailorMoonUsagiGIF.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDA4MDJfMjMw%2FMDAxNTk2Mzc5NjU2Mjkz.H6DEBNdW1m9-9BpU2lm1QwDuv699X90yDTUIakXJjiYg.PPH1_Vi9hwgSD-m3Ps9Dd_VMFcFM8UAqdXgJebES6ysg.GIF.hjin170%2FIMG_7159.GIF&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA2MTFfMTMw%2FMDAxNzE4MDMxNjk0NDEz.BOuJhRiVSjJ--z_QzFsNa89hMjKZERDL0aIoTIx3alYg.Q0n5tqncVuiY7AFSMI9dKubmWSgmer1jk1B683fwDwYg.PNG%2FK-421.png&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzAxMTBfMSAg%2FMDAxNjczMzQwMDUzNzgx.rsFlO8K1eeWbVQICDG3t5iu1lpwwHoe0ZeLzFTWOotEg.lBwGHLx2be5jzd6FROQITsoKwoYCd3XrbSRoaTPkobQg.JPEG.dandinice%2F%25BD%25BD%25B7%25A55.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDExMDdfMjU2%2FMDAxNzMwOTU3ODU4NDY3.SpxhN96luzNhia1vi4TwJIduCiCVoekDJ0_j0TxT_N0g.oyUvpFbW2SgDDCeaBwmxII2CK5c6sQECOKxh2TLqinQg.GIF%2FTumblr%25A3%25DFl%25A3%25DF153760146527290.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi.namu.wiki%2Fi%2FuxGFYr8wm8OY3dW8KnHpoXUCVFEseOiyJ1GV-G0XSzzgKAQ33IoWjgMjIhfKR8agE3fWF7CAz0HoKsjLCZAQFQ.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=http%3A%2F%2Fimg2.ruliweb.com%2Fimg%2Fimg_link7%2F311%2F310749_6.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDA2MjJfMjM5%2FMDAxNTkyNzg4NDk2Njk4.xhbtDUGvWvxiiP8OF1GgK64jNgpY1uBJWEy29nGo9PQg.KXinxx9Ev0sBsWhA434fHnAZebj32ZrK9JucID42Fa0g.PNG.kizle_kr%2Fimage.png&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20160420_31%2F315police_1461151028107p9c5N_GIF%2Fanigif.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA0MTFfMTM0%2FMDAxNzEyNzk1NDc4OTUx.5jwUvRIy6hI_Tky_ZbvBH6yk5oZ1jTV60zm8Kp7psJYg.dGvyATPqdeGDuc4pDg4zSh2DxgBVTo2mswprWLhUTg0g.GIF%2F20200502133734_oddyiqea.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjA0MjJfMTAz%2FMDAxNjUwNTUzMzEyOTIw.a6dbvIrT5hAKW9vntDxTd18m6bVXSSjkjJTO5TSDJGog.8bP2kfHnhlH7K3tdNjVJfXVPlBBJM2ccf9aI5julEuIg.GIF.dorayaki2%2FNaverBlog_20220422_000152_00.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2FMjAyMDA3MDFfOTYg%2FMDAxNTkzNTMzMDIyODg5.hGvJnugzPAOX1q8Ar7dstj_uVfUkZIEjQ2a3WtwyB4cg.-ZjvRtC3AHF-H399KAoL0fX1vaTU6m9-L5wEtzE69Tog.JPEG%2FexternalFile.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi2.ruliweb.com%2Fori%2F19%2F08%2F12%2F16c8337d8134c6a30.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA2MDhfNzUg%2FMDAxNzE3ODQ4NDMwNjc5.B2gOCOwpb6rwjEqIalEzLFZGCQeMCBS8vSmOUBUuLy4g.JD_fBXXXepFN3-oi8c1tO_nBlm1W5IN0R2BXlJ4-ELYg.GIF%2F219506.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20140124_164%2Fwjddnjsthd1_13905697519894FlrA_JPEG%2F1.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAzMjhfMTcw%2FMDAxNzQzMTczMzIxODI3.TfzMnToexNXGqaXcdLYeO38I5AQ75BwdgA0pGTR07DUg.6iDcVDVbibH70Qh7g3l0fYr5r4MZjvEsuEPOKtCVclcg.JPEG%2FIMG_0321.JPG&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxNjEyMjBfMTIx%2FMDAxNDgyMjQxMzEyNzc4.8wtfdeWTsSUThih1kFTBMU2mRfII0TsbPxytZPj-sSsg.le20QOekRMIbVruQcHyK8DOspOTY9VRJLsY9C7jHcXIg.PNG.simho91%2Fgkatjs1.png&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxNzA1MTZfNDkg%2FMDAxNDk0OTIwMTI1Nzc0.-ehJ1VAN8c1FgyfvffS75BeHzUrj8SrnZlWGufmykmYg.b1J1tRwJh7AlPeeQEdlp4bUVENkskCXb2oy8Qu-IDZ8g.GIF.skyphj94%2Ftumblr_oh67qwhyvr1sz111so1_540.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20141116_84%2Fyvonne_0318_1416129626612azQrg_GIF%2F096d68b9150647a2cd478176f6359369.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA1MTdfMzkg%2FMDAxNzQ3NDkxMjg3NTU2.X8MD9VBUKSQNsX1FWmNHaFT65yvSPudLq44Wbtwucucg.7liLDk5kmcWy2jjkUWzBNPEt6iv1_uoIeFis6ZeG8Tog.GIF%2FScreen%25A3%25DFRecording%25A3%25DF20250517%25A3%25DF231237%25A3%25DFYouTube%25A3%25DF1%25A3%25DF1.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA0MzBfMTk1%2FMDAxNzE0NDc0MTQ3NDM0.7jb3Zja4wBrbEUXNZe3GAm-JaYkyU2-hAgb4nE6BZBAg.eFgATCHStl1Vg3hvuT80T5er-KFyjGdzTkqa_4IG62Ag.GIF%2F%25B5%25F0%25C1%25F6-104.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2F20110703_49%2Fkimjy7788_1309653313660BW2Cd_gif%2F%25B2%25BF%25BA%25D2_kimjy7788.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20140521_296%2Fboyeur_14006786342528SjF1_GIF%2Ftumblr_n5gqluYy8U1r3rdh2o1_500.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20150303_115%2Fcmdfjfgnhu_1425363783704d4Ywf_GIF%2Ftumblr_nkmcfwNFW21tg56d0o1_500.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDA4MzBfNjgg%2FMDAxNTk4NzgyMjc5MTk2.HGCMP2ERv7Y_iDnzjZ4NbinZ8YiHPN2q5eBVZTlJ0J0g.agNeCZhEYI3ImHzLXaRNKpludBWEgp43teVE-JyUUTYg.GIF.tmdwls0785%2F7.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20140220_148%2Ffgyood_1392840217700q5gN4_PNG%2F1392840215637_Screenshot_2014-02-20-02-47-13.png&type=sc960_832"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fpa1.aminoapps.com%2F6664%2Fe3d33db9303e6fa60fbac69f48c8249891e0e90d_hq.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxOTExMDdfMjQw%2FMDAxNTczMDU1NTU2Nzkx.bf7BfaXZ3K-fWteLa8LRcHZuZEr44z58GPC4NkV0LCUg.rgiVHX4TA4jdoOsjByIwbDysSLfk5koCXFBI7D24SYkg.GIF.bossers10%2Fyugioh_006.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=http%3A%2F%2Ffile3.instiz.net%2Fdata%2Ffile3%2F2023%2F05%2F14%2F5%2Fb%2F9%2F5b96253e5170b6befabbd676a4b70370.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA5MDhfMTIy%2FMDAxNzI1ODAxMzg2Mzk2.DPtzfOkYn9n8nyH85Cj6tFakFP9nsrIWzZNyzvkmPeAg.vJ-kdVVKCGsyjMOk0ud3BOkcIG_Q4VGnN9C3Fh4pCLkg.GIF%2F%25C7%25D0_09.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA5MDNfMjg1%2FMDAxNjkzNzI5Mjc4OTc5.OmY_efAnn1fTorx6VONr-Qb1IZFYEQc_fXrlRK_t4oEg.eaIKHNd9bSyJPYR8mLVolSdC0bO_vvVukDmldLIDr3Ig.GIF.xnthgk0731%2FIMG_7508.GIF&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDAxMDRfMzYg%2FMDAxNTc4MTM1NTMxNzU4.xuCV__IALnop7TyRQr0I-Cm1dJuqahwzB59nMdVxkzEg.x7Q1o1Wv1ugcrMxzQ8mYTbfABN_UUdTbZH3SDqajYuMg.GIF.ekdms040518%2F1578135529817.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTEwMTdfMjAg%2FMDAxNzYwNjc2OTQyNDEy.CT2zinyieMJu0P9fONoqEE94f-ykj3aXjfrXaMJlvKsg.q11fAe11OFJR7Xyny7OrpGO1VIG2bwbV3yr3Z3ExcXAg.JPEG%2FIMG%25A3%25DF6417.JPG&type=sc960_832"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fimg.extmovie.com%2Ffiles%2Fattach%2Fimages%2F135%2F038%2F484%2F063%2F146377bbbf08b07a9d6630e9eaad4df2.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjA4MjlfMTkx%2FMDAxNjYxNzgwNjkyNDQ0.oF3xdLAgnk1Y_cSC_HU_mDRwxSZquqITBdLVhI0GU8cg.d4Ad3n5PGiKWursNQAbs3OKr7YVKHz9i16cWczb_haUg.JPEG.miwo33%2F1661780691078.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA4MDdfNzEg%2FMDAxNzU0NDk1ODk0ODEw.EPs1NhXwP9QpwRM4CExuvBXCmf209-21QHtNlIvgwYMg.qEgMjH4Z3dUj6MbpP6UWw4J2YeXkoryrNtj6jU6czr0g.JPEG%2FIMG%25A3%25DF6743.JPG&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAyMTVfNzMg%2FMDAxNzM5NjI5NTY2NDE2.2-jSScHnBIzIaeW4IpbuiUvGAK0w38AuhzD-sVjJF1Qg.syWSiXgb3wXv5Ne_OPa_UWo3LaqU4nAuxOWFav7nibUg.GIF%2F07.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxOTA5MjBfNzAg%2FMDAxNTY4OTg1MjM3NTI3.vmPklQA2u_RjJ5p9OyxdHfN7E_IyNhocJ1z4jAN6qTMg.Z0UJ2q4CE2ifCJ-D9UhFhF7_gGM_oX4md0_5zJNX1mEg.GIF.bossers10%2FDeathnote_003.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTA4MTVfMTY5%2FMDAxNjI5MDM0ODk3OTI4.CVsalHB_tyo74B1QZp705drPw1VXrzYnhitpy-3umNEg.FN-8BkpQD_t0xpd-NVbX0cZEOxmhHgih5QKk8pOZ5SEg.GIF.your_echo%2FIMG_9308.GIF&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi2.ruliweb.com%2Fori%2F22%2F01%2F09%2F17e3b394736300723.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTA1MTdfNTIg%2FMDAxNjIxMjA5MzE5NjM1.HOHBJa_BA5gMCqxUG2tFYwD5UTY3pUiTG0-yQCMqC9og.WYfWX6WFso-Y39PySK4__iK62munKS4VJVLv6EgS5dEg.GIF.ritardando516%2F%25B0%25C5%25C0%25CE_%25BA%25AF%25C8%25AD_%25C3%25D1.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAyMTNfMjUz%2FMDAxNzM5NDM5MDM0MDQy.vWfhAFp5qhCaXbdyNYtiXJtXXsUJeg0QJBvyUlQBqEkg.kl51QKrGCXq8gop55FG9Is3ACjluYcMJ-KX92bg1pX0g.GIF%2Fanimesher.com_attack-on-titan-eren-eren-yeager-1874824.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi3.ruliweb.com%2Fori%2F21%2F05%2F01%2F17925a78f1b516e2f.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi2.ruliweb.com%2Fori%2F23%2F06%2F21%2F188de00ed1c53acab.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzExMTNfMjIz%2FMDAxNjk5ODUwNTYxOTY1.Sb-kUbAMx55-kVxm4eMysaKu5GbytK4ApdwajQH8XX8g.3eObxwS5QNuavR_ijO8gYhtaQdQ-_Om-1ONNICaKgYQg.GIF.suri0212%2F20.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA3MDVfMTgy%2FMDAxNzIwMTM4NTA0OTA2.RIPm_GNW93wTSmcELC4PqfVr8-9pKoBZ3eYi4bUPybwg.c1QHxwIt1mNA4Scvv2CUVuV69nORz4YU_6CKcOLAFncg.GIF%2FSmartSelect%25A3%25DF20240705%25A3%25DF090334%25A3%25DFGallery.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzEwMTVfMTUg%2FMDAxNjk3MzA0OTEzNDc2.7hC93c5LchHgJmK7n05tZM6Z0x4QLMnFUi3vy19u3JYg.8UzV9GOlH3-jB-4OJjXXxyxkriTOf3E6wnT0Lrvl87cg.GIF.thflrjatk%2FScreen%25A3%25DFRecording%25A3%25DF20231013%25A3%25DF223650%25A3%25DF2.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA5MjNfNTIg%2FMDAxNjk1NDM1MDU5ODM3.PqNQxUWnh-y22TAtlLMIzY41b9RYsRq3he18nGXhyakg._71TpGL8_H5m7gUBLiGAjRJPbklUnALu52oqHPcCpTsg.GIF.rlsxhzl1217%2FIMG_3379.GIF&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzExMjRfMjQg%2FMDAxNzAwNzkwNTkxODAw.Gsjg53zqqh2z3j_0Ld9bfnylDv5hoAgrE6Pz2VILKAMg.huXdNBHVysvcmypkvIHUiBJrYVkzrKKOJ_5MoAd7FAYg.GIF.gkgjrgjr%2F%25C1%25D6%25BC%25FA%25C8%25B8%25C0%25FC%25BD%25BA%25C4%25ED%25B3%25AA.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzEyMTVfMjky%2FMDAxNzAyNjE3NjA2Nzcx.-RwsNhrPGgzWVX8w3Yx4Q7tt65k1zGqOB35J_hWo-Jog._g7OrIVjkCLWqZXL974X_X39u35nsBKGa3GX-ITYL3Mg.GIF.jjang_bom%2Fjujutsu-kaisen-nanami-kento.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjExMDZfMTAz%2FMDAxNjY3NzE1NzQ5NjU2.K8AjK5xW_7Y6LK6m8oH15AfNtoSKgODzA_7kY5XbWDQg.fiNrcE2ipcjN-YQ9Qek48PAKtHzgku-_UT66Oi6jczQg.PNG.dlrudtnxn%2F1667709964236.png&type=sc960_832"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi1.ruliweb.com%2Fori%2F23%2F09%2F21%2F18ab540e13a506f0d.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi1.ruliweb.com%2Fcmt%2F23%2F06%2F12%2F188afda93cb929c2.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA3MDRfMTIy%2FMDAxNzUxNjI5MTEwNDgw.Ar9YQXXXYG27TCaHDskBg33gGOG42yODGaWMkZhULfAg.zTIxdyVQWbHDM4w-JYzQlbzcIF6xawivv8WaB6BUda0g.GIF%2F1.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi2.ruliweb.com%2Fori%2F22%2F12%2F21%2F18530a6c630570fa9.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTExMTNfNjkg%2FMDAxNzYzMDEyNjE2ODY3.7tfFKgiFx94vp9GbZmTk1GM6iPQqzxND0aF0Jfb8bVog.k9g6LZ9cotuyWjKzNuYa8iF3_vCumnhwqct9P-k_cTcg.GIF%2FIMG%25A3%25DF8953.GIF&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi1.ruliweb.com%2Fori%2F23%2F01%2F15%2F185b3dac230525908.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTEwMjZfMTA5%2FMDAxNzYxNDc0ODQ2ODM3.CVCNvK_pKlLziyR2O2QeQpR5MZCIYZ-_BwTIVRuMW8og.hiNfzagk4jMBG7W9V2luLfwl9cKSrXiMXhskI8tQ3a0g.GIF%2FAnimation26.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTEwMTNfMTA5%2FMDAxNzYwMzQ1NjE3MTA3.LrxdMG5utGxvtHUIhi9HXAQPrxjgOzPadMMx9CCjyKAg.H7eR-l136WpP699rH6maEsT9cCnMfOUEZgx89qtu3z8g.GIF%2FVideoToGif%25A3%25DFGIF.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDAxMTVfMjI1%2FMDAxNzA1Mjg1MDAzMzc3.O8_kjcR5l3LCWYO2AVGZ-I76R_c6fQe241TzAfCA1_Ag.BAExWn0d4rPJkGHRnGOxLbSx1lQwdI-8k9cwKfeNJLgg.GIF.fjdkeivn%2F1.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAzMjNfMTcy%2FMDAxNzQyNjY1Nzc3NDU2.2TU2RUwjTqQdFpuR_YYBcENJRa0YSclHHZhscR1zxMEg.vD5PT8Mrr49OvMMBlpqoYDTyhGFo80LzXNzfg6y5dfIg.GIF%2F9.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAxMDVfMTU0%2FMDAxNzM2MDg5MTA3NjAy.Inj-rhBvdL_B8wCJC_FrtFmEYO7wURI6WHR18vYURaEg.zXymx-JZA0HDWnQJtMdkqxTGb_7ppdMRAFk-wwjXRikg.GIF%2F1.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA4MDRfMjI3%2FMDAxNzIyNzM2MzE3ODIz.ujXOGM7rlAQ9g0Mi0Jc-aL9EZUdCuQhBgXZ9001O-cEg.CwnwoE5Q_ofAd-q6hDfo-djF2vm_5x79IwiD30eMYPkg.GIF%2F11.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA4MDVfMjcz%2FMDAxNzU0MzI1OTY2NTE2.avvbl2Ie6NuWSR-MRIUhQCepP_7YQra9atO_M0ikd6gg.aYB1iwPuomm6vkWAD610rXCZOiCVwIP7iKV9BLvuYcsg.GIF%2FGIF_2025-08-05_%25BF%25C0%25C0%25FC_1-21-54.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDAzMDFfMTk1%2FMDAxNzA5MjQ5MjUxMjAx.JC3cyJXzhKCSGmfbxwciNbD33NDkfm8nsO3l4kVFOx4g.VDTIW47iwbZcO0BNxst2kIQrm3FsDIpDecPXwdbSNaAg.GIF%2F7.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDEyMjJfNjgg%2FMDAxNzM0ODUwMjA1NjQ3.8gjPB7qbhCc_h7IF2wNUz8cR5wwRiMEjxQ4EGq4u5UYg.Nhq6CIxC7SkA8mPHLvPPFoHxeFYhXpoI5qvykgtD32gg.GIF%2FGIF_2024-12-22_%25BF%25C0%25C8%25C4_3-46-04.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDEyMDdfMjM3%2FMDAxNzMzNTgwMzM0MDUx.inteKTW3qhfJoDDVrzhr2FMkBySwx7Uki20T_ylU1uAg.z3I7U0IyD2IVulz5UbIc_C5RUIii3ubNi7DnAM8odRYg.GIF%2FKakaoTalk_20241207_221653830_09.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA5MDVfMTQ0%2FMDAxNzU3MDIxMjUyMjU0.7zzINb_N2Dg56m2mNjhIjYhyqCPEr1wOaH6fLjzdvUYg.g2ZSH9gWVkrXrlGNxQ-M1XWAybh0MXJZ3H8BWZIowJkg.GIF%2FIMG%25A3%25DF3336.GIF&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fupload3.inven.co.kr%2Fupload%2F2021%2F04%2F06%2Fbbs%2Fi015505874132.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDExMDJfMTIw%2FMDAxNzMwNTAzMjQ1Njgx.V_2RG0joinXBIheS22tqktmWY3gCnVka9lWBTDav_HIg.YpZNQOSVSj_H7fRlcgUQTxKLS_eRlQjmAHyWHj1kuvcg.GIF%2FGIF_2024-11-02_%25BF%25C0%25C0%25FC_8-20-10.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAzMzFfMTM1%2FMDAxNzQzNDI2NjMyMjYw.13IplS9w2RoDK-dSkdrqPG4HxyvQuKK-q9hT5MVtb1cg.UWURH-gpreqvIr5tzGZy1lQ8ePyvbI98tKk8VFiODgog.GIF%2Fexport_0.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi.namu.wiki%2Fi%2FblKXOzyARLVZNS2qxVWD_J0SYOwFTPkzrGkYbDaWgZcNX7uIlCk_66KiONykH53wEt9ABWiJc8Q2y29HLlKbZg.webp&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTAzMTJfMjc2%2FMDAxNzQxNzYwNTEyMjM3.29Yqi8aHZUsTT4q7ii2lSFt3p09_2veXooaY6ZP8e-Ag.TD0nr48Hf0hvEINVuZCidp7DJK5rWZGoCJn9afAQsbog.GIF%2F_6.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTEyMDRfMTI5%2FMDAxNjM4NTkzODAxOTc1.WeEbrTS6SVHURLmqpVVecHDRsg3qGjXXA7SQ0I4Q9iIg.7N8_Y4LcGu3vlNcLL48_NFj91fZJO88UJtbZeHnAg6Eg.GIF.lima_heights%2FKakaoTalk_20211128_132433405_11.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDExMjFfMjI1%2FMDAxNzMyMTU1MTg4ODAw.ha9QvY3Xe-0zfm4M4-978LBmyLMy8k-MfesLdKhjCQYg.uBXlFTS6YwleHlUkmt_5TPcj5OjtvoS2GYp3COXiMb0g.GIF%2FIMG_1810.GIF&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2Fdata40%2F2009%2F1%2F7%2F24%2Fdaumcapture_7%25BA%25D049%25C3%25CA_smreothdbs.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA1MDFfNDEg%2FMDAxNzE0NTQwMzMyMjE4.6885c1IFxcCa3c27YnkfwdBQPAGCqCBddb94pQqNftEg.t6lhxzmgENd3R_5qJb5k7Oodjm7uQAg2pT7ejkyX0EEg.JPEG%2FIMG_6577.JPG&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjA5MThfMjgw%2FMDAxNjYzNTEzMTg1OTQw.CahN-E28F8Hs0waqIN8rcTJEoFMWsDTi7t0WAWFMlqMg.9n33ZwZB8ImJ14ZYNDQgSUO7DEAgA1ZPcGqMz_71efAg.JPEG.dbwls5785%2FIMG_3782.JPG&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxNzA5MTVfOTcg%2FMDAxNTA1NDg1NDE4NTM3.4SDLT73ubZHBrg-PfgbFfElrO41etsvBz-ZloRlRgTog.tMG-CyQZrcMPVHAf8S7oOOeOh6yz329nD8nu541zwL0g.GIF.kino3364%2FlqSm7gk.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2F20141119_191%2Fnugu0525_14164008883017toDi_GIF%2Fhu_1414035278_6576434235.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2F20141219_207%2Fazsxdqweazsx_1418998226502KXUGo_GIF%2Fhu_1411912700_7578464118.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi1.ruliweb.com%2Fori%2F21%2F12%2F13%2F17db30712fd489df.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20150128_75%2Fmegataecho_1422431330349ER4J7_GIF%2Ftumblr_ncgzm1Zlz11sfeoupo1_500.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDAyMDJfNzEg%2FMDAxNTgwNjM1Mzc5OTI4.QXlDqwkzA4w6YGlwtrXblWthyhonApQKS19Zsqfb6zQg.nyjZEf89Sfa1EkM0YWwdNS5xHG802kFgXgKRHDgte7Mg.GIF.ay216%2F1580635378271.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxNjEyMDZfMTY4%2FMDAxNDgxMDAwODEzNzg2.uTBEOQNO7Ozus_0Ox2a3tt97lYr98RYw3i9It6_w-Igg.8xO1AZ0WowK-iihR09D8BpxVAW8u_SejVyMu47oAXm0g.JPEG.jzipsa%2FOhys-Raws_Haikyuu_Second_Season_-_23_%2528MBS_1280x720_x264_AAC%2529.mp4_20161129_13.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDAxMTNfODEg%2FMDAxNTc4ODk4OTg5Mzg4.Xz-BvYhNGGJ3Q65S2vFZuR3DM3FgS4ck0C5ZiURIgS4g.XSu_vl_-GA3N0TXtiOn3dCoh5jk7BVqQTOt2Muz5JSYg.GIF.moonstar-light%2F1578898989029.gif&type=a340"},
+  //하이큐//
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxNzEyMDVfMTIz%2FMDAxNTEyNDgyODk0NTAw.dqPscPuaeIAsYLHLCnTi8alA79jBa9InC8ec4diyqT0g.F5p7OvHR4e1fpSmKx9LlKuO1HoXy-bIwNtAtj5tDDUgg.GIF.snowrain1100%2F65.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fupload.inven.co.kr%2Fupload%2F2014%2F10%2F05%2Fbbs%2Fi0286716477.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2FMjAxOTAzMTJfMjA2%2FMDAxNTUyMzkwOTI3NTIy.HmYVTxToizaOCUYJ7edmn67wJTjqof7De-j1VYB4e_sg.3yDPLh-LujF5Kq-x3gjlOvKGSI1fwBRndFB75_UgdU4g.GIF.alex7058%2F1BQAWW8gD1XNw_5cdC4i3nexTmD-MUNBc_1.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDEyMjVfMTIz%2FMDAxNjA4ODgzMDE4OTQ3.qbyATj8VfFW0sfSaHiU_AKj3Jye0LRxc8BP0ijVc2dQg.skTF_XEYfAjZhoBrcZ1TeX6KZ7tzQQ327wFcdOQrDTMg.GIF.wltn6947%2Fse3%25A3%25DFani%25A3%25DF1608882912981%25A3%25DFa.gif&type=sc960_832_gif"},
+  //일곱대죄 돼지//
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxODAyMjJfMjkz%2FMDAxNTE5MjY3ODE3OTA0.9ka6glBpJz6E1pGq0Kw1gvEWJw0yWDrpG28UDmF5RmUg.px8MFOTVC-pnDd9Ct8SYJ4cJsn7JUdtGTxzN-VHW-l8g.GIF.binglove56%2Ftumblr_nfo5g46oLK1slv5gyo1_500.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2F1.gall-img.com%2Ftdgall%2Ffiles%2Fattach%2Fimages%2F82%2F284%2F711%2F074%2Fd6e07d9f5fd8c37b87c09964e850a655.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2F20151226_48%2Fwogus2003_1451133692773sABqK_GIF%2FGIF_20151225_231544.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20151216_217%2Finto0801_1450220794189pvUxD_GIF%2F1450219915778.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2F20150903_159%2Fhuuga_1441292380124RSvgM_GIF%2Ftumblr_nsd2gfL9Xc1u21ng6o2_540.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMDAzMjVfMjc5%2FMDAxNTg1MTA1NDk0MDk2.d9mZrFY2bAdA25L6kws9KGYzBImfQyzfFn4CigG3ZBIg.lgO-AYPPLyujxEmj3W61s7dkX0GP8Ot5J64FVZsjNA0g.GIF.didcjddns%2Ftenor_%25281%2529.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA5MTZfNjcg%2FMDAxNzU4MDI0OTg4MzY1.C2-Jl6NH8m-8PJ8sHMNR0LOfW8U1CafEUIywgXQcJNog.C3KUFN_fwvF3RhcvEvTOiud6dQRp3kFBnswg-fO1p5og.GIF%2F47.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxODEyMjRfMjM1%2FMDAxNTQ1NjU0OTQwOTI0.0b1AH7BqFhdt0TxUNHzgE_WukzQU6QWq5xbe1CBZJmsg.YS61mmJsWKF-heHIwFXoM-nSQgloHJQQXgkrdIqmfcQg.GIF.ksan040129%2FSmartSelectGIF_2017-08-01-21-06-46.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi3.ruliweb.com%2Fori%2F19%2F02%2F26%2F16927cb6b7e351892.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA2MTVfMjUw%2FMDAxNzQ5OTU1MTEzMTkz.w2ahzNJMJq5bfexYtW_u5Li02_-Zj7vEgc4YzRGaBc4g.5CR3RW6ns71YunFefQjOom3BX4aYmFSznuPq7mkbuw4g.GIF%2F%25BF%25C3%25B8%25B6%25C0%25CC%25C6%25AE%25BF%25F4%25C0%25BD.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi2.ruliweb.com%2Fori%2F18%2F04%2F16%2F162cd0bddf34c211c.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fcafefiles.naver.net%2FMjAxOTAxMjBfMTE4%2FMDAxNTQ3OTU1Nzc3NTUx.T-uKIU4Jq_8Zj6XKbXbfryQRIdC17eCzRMv084GasVEg.wiyWYj24k_Cy8XvB49o1SMXtiSOOC25mNkHdNhXi7rQg.GIF.immanuel1226-2%2FexternalFile.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzEyMDlfMjE4%2FMDAxNzAyMDQ4OTk3NTI0.h-Wkjz4RIghEGLZ6CDLKY6psZ0sK6UUTfZYdxCLrJecg.j7lj-Ylr_jMtK9rJh8mT7DxudaaMVfOWXYUaVPkR7xUg.GIF.007_sky_fall%2FGIF_2023-12-09_%25BF%25C0%25C0%25FC_12-22-55.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDEyMjdfMjUy%2FMDAxNzM1MjI4NzM4NjQ3.O1rMbqN8x77AiNA6KLINLnjHqDvHh1NdWDGcpchoDtwg.dvOuBPykNZ4k9lMBMMXQsqtPXZy5qMZuj0fD4JVmS70g.GIF%2F%25C3%25A2%25BF%25F9%25C3%25CA%25B2%25C9%25B9%25E7.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNTA5MjRfMjA4%2FMDAxNzU4NzEyMDM4NzQ1.WGCt0f1_b5PQq5ojYHMcIH727Uvy9ui43GlmA7N2rCQg.tGA8MF2baNQ-lkJbMeGhPkY4UusOdmyKN2yx9l-dR3Ag.GIF%2F0%25C7%25D4%25C1%25A4%25BF%25A1_%25BA%25FC%25C1%25F8_%25C7%25C1%25B8%25AE%25B7%25BB.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDA2MDJfMjA0%2FMDAxNzE3MzExMTAzOTk2.U-7OofCsKOjx5uj7Yni3UvzPifOvhsxmZ-WtfYxra9wg.QdTPIVV5zuhc0OCsoorHsQ2cDc-uz8bcBpwsHeu64eog.GIF%2F%25B4%25D9%25BF%25EE%25B7%25CE%25B5%25E5.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fi3.ruliweb.com%2Fori%2F23%2F02%2F22%2F18676fc1c421b4a9a.gif&type=sc960_832_gif"},
+  { src: "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzA1MjFfNzQg%2FMDAxNjg0NjYwMzM1MDkw.M607MXEdVXQiQrYCE1UgZESkDHkOMlyKMpbYHQfw47Ag.MqG1czDCzaO1J_Uf8V2dRwiB7BsOv9MAMdsO_v0gZ18g.JPEG.vkdvkdcl%2FScreenshot%25A3%25DF20230521%25A3%25DF175526%25A3%25DFChrome.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fqquing.net%2Fdata%2Fupload%2Fmanga%2F2023_01_185f60869b9311565.jpg&type=sc960_832"},
+  { src: "https://search.pstatic.net/sunny/?src=https%3A%2F%2Fmedia1.tenor.com%2Fm%2F3epDzDqFcK0AAAAC%2Fsolo-leveling-%25EB%2582%2598-%25ED%2598%25BC%25EC%259E%2590%25EB%25A7%258C-%25EB%25A0%2588%25EB%25B2%25A8%25EC%2597%2585.gif&type=sc960_832_gif"}
+  
+
+  
+
+
+];
+
+/* 이미지 자동 생성 */
+const container = document.getElementById("scene-container");
+
+sceneImages.forEach(item => {
+  const div = document.createElement("div");
+  div.classList.add("scene-card");
+  div.innerHTML = `
+    <img src="${item.src}">
+    <p class="scene-title">${item.title}</p>
+  `;
+  
+  div.addEventListener("click", () => {
+    document.getElementById("img-modal").style.display = "flex";
+    document.getElementById("img-modal-content").src = item.src;
+  });
+
+  container.appendChild(div);
+});
+
+/* 모달 닫기 */
+document.getElementById("close-modal").addEventListener("click", () => {
+  document.getElementById("img-modal").style.display = "none";
+});
+</script>
+
+</body>
+</html>
