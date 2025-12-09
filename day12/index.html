@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url(main.css);
+    </style>
+</head>
+<body>
+    <!-- absolute 사용X, 밑에 줄 처럼 HEADER, MAIN, FOOTER 사용 -->
+    <header>version 1.0</header>
+    <main>
+        <div class="title">Dungeon & Dragons</div>
+        <div class="menu-item select">New</div>
+        <div class="menu-item">Load</div>
+        <div class="menu-item">Option</div>
+    </main>
+
+    <main id = "credit-screen" class = "hide">
+        <div>Credits</div>
+        <div>Game Design : jinbyeonghun</div>
+        <div>Programming : jinbyeonghun</div>
+    </main>
+
+    <footer>202258011 JinByeongHun</footer>
+
+    <script type="module">
+        import main from './index.js'
+        main();
+    </script>
+</body>
+</html>

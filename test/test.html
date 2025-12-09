@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>년도별 대표 애니 + 기분별 추천</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans KR',sans-serif}
+    body{max-width:1000px;margin:28px auto;padding:18px}
+    header{display:flex;gap:12px;align-items:center;justify-content:space-between}
+    h1{font-size:1.6rem;margin:0}
+    .controls{display:flex;gap:8px;align-items:center}
+    select,button{padding:8px 10px;border-radius:8px;border:1px solid #ddd;background:#fff}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:18px}
+    .card{border:1px solid #eee;border-radius:10px;padding:10px;box-shadow:0 6px 18px rgba(0,0,0,.03)}
+    .card img{width:100%;height:120px;object-fit:cover;border-radius:6px}
+    .year-title{margin-top:28px;font-weight:700}
+    .recommend-box{margin-top:18px;padding:12px;border-radius:8px;background:#fbfbff;border:1px solid #eef}
+    .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+    .tag{padding:6px 8px;border-radius:999px;border:1px solid #ddd;font-size:0.9rem}
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>년도별 대표 애니 + 기분별 추천</h1>
+    <div class="controls">
+      <!-- Mood selector -->
+      <label for="mood">기분:</label>
+      <select id="mood" aria-label="기분 선택">
+        <option value="">— 선택 —</option>
+        <option value="happy">기쁜/경쾌한</option>
+        <option value="sad">우울한/잔잔한</option>
+        <option value="romantic">로맨틱/달달한</option>
+        <option value="excited">흥분되는/액션</option>
+        <option value="nostalgic">향수/레트로</option>
+        <option value="thoughtful">생각거리를 주는/철학적</option>
+      </select>
+      <button id="recommendBtn">추천 받기</button>
+      <button id="resetBtn">초기화</button>
+    </div>
+  </header>
+
+  <!-- Summary / explanation -->
+  <p id="intro">아래는 예시로 채워둔 연도별 대표 애니 섹션과, 선택한 '기분'에 따라 추천작을 보여주는 기능이 포함된 샘플 HTML입니다. 원래 사용하던 코드의 형태(연도 섹션 등)를 유지하면서 바로 붙여쓸 수 있게 설계했습니다. <strong>아래 코드 주석</strong>을 보고 본인의 데이터로 쉽게 교체하세요.</p>
+
+  <!-- Recommendation result -->
+  <div id="rec" class="recommend-box hidden">
+    <strong>추천 (기분: <span id="recMood"></span>)</strong>
+    <div id="recList" class="grid" style="margin-top:12px"></div>
+    <div style="margin-top:10px">태그: <span id="recTags"></span></div>
+  </div>
+
+  <!-- Year-by-year example list -->
+  <!-- 유저가 이미 가지고 있는 '년도별 대표 애니' 섹션을 이 구조로 유지하거나
+       아래 예시 카드들만 본인 데이터로 교체하면 됩니다. -->
+  <section id="years">
+    <h2 class="year-title">1980년대 대표작</h2>
+    <div class="grid" id="y1980">
+      <!-- 실제로는 서버나 JSON에서 불러오거나, HTML로 직접 채워넣어도 됩니다. -->
+      <div class="card" data-title="터프 파이트" data-tags="action,classic" data-year="1983">
+        <img src="https://picsum.photos/seed/1983/400/200" alt="1983 대표 애니 포스터">
+        <div style="margin-top:8px"><strong>터프 파이트 (1983)</strong></div>
+        <div style="font-size:0.9rem;color:#555">설명: 클래식 액션 애니</div>
+      </div>
+      <div class="card" data-title="꿈의 모험" data-tags="adventure,feel-good" data-year="1987">
+        <img src="https://picsum.photos/seed/1987/400/200" alt="1987 대표 애니 포스터">
+        <div style="margin-top:8px"><strong>꿈의 모험 (1987)</strong></div>
+        <div style="font-size:0.9rem;color:#555">설명: 따뜻한 모험물</div>
+      </div>
+    </div>
+
+    <h2 class="year-title">2000년대 대표작</h2>
+    <div class="grid" id="y2000">
+      <div class="card" data-title="시티 런" data-tags="urban,action,modern" data-year="2002">
+        <img src="https://picsum.photos/seed/2002/400/200" alt="2002 대표 애니 포스터">
+        <div style="margin-top:8px"><strong>시티 런 (2002)</strong></div>
+        <div style="font-size:0.9rem;color:#555">설명: 도시 액션</div>
+      </div>
+      <div class="card" data-title="그녀의 계절" data-tags="romance,drama" data-year="2005">
+        <img src="https://picsum.photos/seed/2005/400/200" alt="2005 대표 애니 포스터">
+        <div style="margin-top:8px"><strong>그녀의 계절 (2005)</strong></div>
+        <div style="font-size:0.9rem;color:#555">설명: 감성 로맨스</div>
+      </div>
+    </div>
+
+    <!-- 실제 프로젝트에서는 여기에 2010, 2020 등 다른 연도 섹션을 추가하세요. -->
+  </section>
+
+  <script>
+    // ====== Mood → 추천 매핑 샘플 ======
+    // 필요하면 더 많은 태그/데이터(장르, 러닝타임, 등급 등)를 추가하세요.
+    const MOOD_MAP = {
+      happy: {
+        label: '기쁜/경쾌한',
+        tags: ['feel-good','comedy','slice-of-life']
+      },
+      sad: {
+        label: '우울한/잔잔한',
+        tags: ['drama','melancholy','slice-of-life']
+      },
+      romantic: {
+        label: '로맨틱/달달한',
+        tags: ['romance','drama']
+      },
+      excited: {
+        label: '흥분되는/액션',
+        tags: ['action','thriller','fight']
+      },
+      nostalgic: {
+        label: '향수/레트로',
+        tags: ['classic','retro']
+      },
+      thoughtful: {
+        label: '생각거리를 주는',
+        tags: ['psychological','thoughtful','philosophical']
+      }
+    };
+
+    // helper: all cards in the page
+    const allCards = Array.from(document.querySelectorAll('.card'));
+
+    function recommendForMood(moodKey){
+      const mapping = MOOD_MAP[moodKey];
+      if(!mapping) return [];
+
+      // Simple scoring: 카드의 data-tags와 mood tags의 교집합 크기
+      const moodTags = mapping.tags;
+      const scored = allCards.map(card=>{
+        const tags = (card.dataset.tags||'').split(',').map(t=>t.trim()).filter(Boolean);
+        // score is number of matching tags
+        const score = tags.reduce((acc,t)=> acc + (moodTags.includes(t) ? 1 : 0), 0);
+        return {card,score,tags};
+      }).filter(x=>x.score>0);
+
+      // sort by score desc then year desc
+      scored.sort((a,b)=> b.score - a.score || (parseInt(b.card.dataset.year||0) - parseInt(a.card.dataset.year||0)) );
+
+      // return card DOM elements (top 6)
+      return scored.slice(0,6).map(s=>({el:s.card,score:s.score,tagList:s.tags}));
+    }
+
+    // render recommendation box
+    function showRecommendations(moodKey){
+      const recBox = document.getElementById('rec');
+      const recList = document.getElementById('recList');
+      const recMood = document.getElementById('recMood');
+      const recTags = document.getElementById('recTags');
+
+      const mapping = MOOD_MAP[moodKey];
+      if(!mapping){ recBox.classList.add('hidden'); return; }
+
+      const picks = recommendForMood(moodKey);
+      recList.innerHTML = '';
+      if(picks.length === 0){
+        recList.innerHTML = '<div style="padding:12px">해당 기분에 매칭되는 작품이 없습니다. 연도별 목록에 태그를 추가해보세요.</div>';
+      } else {
+        picks.forEach(p=>{
+          // we clone and slightly adapt the card to show in recommendation area
+          const clone = p.el.cloneNode(true);
+          // add score badge
+          const badge = document.createElement('div');
+          badge.textContent = 'score: ' + p.score;
+          badge.style.fontSize='12px'; badge.style.marginTop='6px'; badge.style.color='#333';
+          clone.appendChild(badge);
+          recList.appendChild(clone);
+        });
+      }
+
+      // show mood label and tags
+      recMood.textContent = mapping.label;
+      recTags.textContent = mapping.tags.join(', ');
+      recBox.classList.remove('hidden');
+      // scroll into view for UX
+      recBox.scrollIntoView({behavior:'smooth',block:'center'});
+    }
+
+    // wire up controls
+    document.getElementById('recommendBtn').addEventListener('click', ()=>{
+      const mood = document.getElementById('mood').value;
+      showRecommendations(mood);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      document.getElementById('mood').value = '';
+      document.getElementById('rec').classList.add('hidden');
+    });
+
+    // Optional: you can enable live preview when mood is changed
+    document.getElementById('mood').addEventListener('change', (e)=>{
+      // comment the next line if you prefer clicking '추천 받기' instead
+      // showRecommendations(e.target.value);
+    });
+
+    // ====== 개발자 메모 ======
+    // 1) 실제 앱에서 추천 로직을 더 정교하게 하려면 각 카드에 'genres', 'score', 'rating' 같은
+    //    추가 데이터 속성을 달아 서버에서 JSON으로 받아 처리하세요.
+    // 2) 사용자의 선호(예: 좋아요/싫어요)나 시청 기록이 있으면 collaborative filtering(협업 필터링)
+    //    또는 content-based 추천 모델을 도입할 수 있습니다.
+    // 3) 본 샘플은 '기분 태그'와 카드의 data-tags의 교집합으로 단순 매칭합니다. 유지보수하기 쉬운
+    //    형태로 되어 있으니, 원래 코드의 HTML 구조(카드 구조)를 그대로 덮어써도 동작합니다.
+
+  </script>
+</body>
+</html>
